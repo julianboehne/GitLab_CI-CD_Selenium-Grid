@@ -4,7 +4,6 @@ param (
     [string]$DownloadApi = "https://api.github.com/repos/SeleniumHQ/selenium/releases/latest"
 )
 
-# Sicherstellen, dass das Selenium-Verzeichnis existiert
 if (!(Test-Path -Path $SeleniumDir)) {
     New-Item -ItemType Directory -Path $SeleniumDir | Out-Null
 }
@@ -12,7 +11,6 @@ if (!(Test-Path -Path $SeleniumDir)) {
 $JarPath = Join-Path $SeleniumDir $JarName
 $VersionFile = Join-Path $SeleniumDir "selenium-version.txt"
 
-# Neueste Selenium-Version ermitteln
 try {
     $release = Invoke-RestMethod -Uri $DownloadApi
     $latestVersion = $release.tag_name.TrimStart("selenium-")
@@ -23,13 +21,11 @@ try {
     exit 1
 }
 
-# Aktuelle Version ermitteln
 $currentVersion = ""
 if (Test-Path -Path $VersionFile) {
     $currentVersion = Get-Content -Path $VersionFile -ErrorAction SilentlyContinue
 }
 
-# Versionen vergleichen
 $updateRequired = $true
 if ($currentVersion) {
     try {
@@ -45,7 +41,6 @@ if ($currentVersion) {
 }
 
 if ($updateRequired) {
-    # Laufenden Selenium-Server beenden, falls vorhanden
     $procs = Get-WmiObject Win32_Process | Where-Object { $_.Name -eq 'java.exe' -and $_.CommandLine -like '*selenium-server-latest.jar*' }
     foreach ($proc in $procs) {
         Write-Host "Beende laufenden Selenium-Server (PID $($proc.ProcessId))..."
@@ -53,12 +48,10 @@ if ($updateRequired) {
         Start-Sleep -Seconds 5
     }
 
-    # Vorhandene JAR-Datei löschen
     if (Test-Path -Path $JarPath) {
         Remove-Item -Path $JarPath -Force
     }
 
-    # Neueste JAR herunterladen
     try {
         Write-Host "Lade Selenium-Server herunter..."
         Invoke-WebRequest -Uri $downloadUrl -OutFile $JarPath
@@ -70,7 +63,6 @@ if ($updateRequired) {
     }
 }
 
-# Selenium-Server starten (je nach Modus)
 try {
     Write-Host "Starte Selenium-Server im Hintergrund..."
 

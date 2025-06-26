@@ -59,7 +59,7 @@ stop_macos:
     - if: '$SELENIUM_OS == "macos"'
   script:
     - echo "macOS detected, running macOS stop script..."
-    - chmod +x "${CI_PROJECT_DIR}/scripts/stop-selenium-macos.sh"
+    - chmod +x "${CI_PROJECT_DIR}/scripts/stop-selenium.sh"
     - "${CI_PROJECT_DIR}/scripts/stop-selenium-macos.sh"
 
 stop_windows:
