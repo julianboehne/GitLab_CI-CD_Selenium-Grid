@@ -1,0 +1,74 @@
+stages:
+  - setup
+  - stop
+
+variables:
+  SELENIUM_HUB_URL: "http://localhost:4444/"
+  SELENIUM_OS: "windows" # linux, macos, or windows
+
+setup_linux:
+  stage: setup
+  tags:
+    - selenium
+  rules:
+    - if: '$SELENIUM_OS == "linux"'
+  script:
+    - echo "Linux detected, running Linux setup script..."
+    - chmod +x "${CI_PROJECT_DIR}/scripts/setup-selenium.sh"
+    - "${CI_PROJECT_DIR}/scripts/setup-selenium.sh"
+
+setup_macos:
+  stage: setup
+  tags:
+    - selenium
+  rules:
+    - if: '$SELENIUM_OS == "macos"'
+  script:
+    - echo "macOS detected, running macOS setup script..."
+    - chmod +x "${CI_PROJECT_DIR}/scripts/setup-selenium-macos.sh"
+    - "${CI_PROJECT_DIR}/scripts/setup-selenium-macos.sh"
+
+setup_windows:
+  stage: setup
+  tags:
+    - selenium
+  rules:
+    - if: '$SELENIUM_OS == "windows"'
+  script:
+    - Write-Output "Windows detected, running PowerShell setup script..."
+    - powershell -ExecutionPolicy Bypass -File "${CI_PROJECT_DIR}/scripts/setup-selenium.ps1"
+
+stop_linux:
+  stage: stop
+  tags:
+    - selenium
+  when: manual
+  rules:
+    - if: '$SELENIUM_OS == "linux"'
+  script:
+    - echo "Linux detected, running Linux stop script..."
+    - chmod +x "${CI_PROJECT_DIR}/scripts/stop-selenium.sh"
+    - "${CI_PROJECT_DIR}/scripts/stop-selenium.sh"
+
+stop_macos:
+  stage: stop
+  tags:
+    - selenium
+  when: manual
+  rules:
+    - if: '$SELENIUM_OS == "macos"'
+  script:
+    - echo "macOS detected, running macOS stop script..."
+    - chmod +x "${CI_PROJECT_DIR}/scripts/stop-selenium-macos.sh"
+    - "${CI_PROJECT_DIR}/scripts/stop-selenium-macos.sh"
+
+stop_windows:
+  stage: stop
+  tags:
+    - selenium
+  when: manual
+  rules:
+    - if: '$SELENIUM_OS == "windows"'
+  script:
+    - Write-Output "Windows detected, running PowerShell stop script..."
+    - powershell -ExecutionPolicy Bypass -File "${CI_PROJECT_DIR}/scripts/stop-selenium.ps1"
